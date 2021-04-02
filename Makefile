@@ -5,6 +5,3 @@ integration:
 
 docker-test:
 	./tests/cucumber/docker/run_docker.sh
-
-generate:
-	./templates/generate.sh
