@@ -1,24 +1,30 @@
-FROM node:latest
+# ==============================
+# > BUILD AND GENERATE
+# ==============================
 
-# These environment variables will be populated automatically
-ENV TEMPLATE ""
-ENV ALGOD_SPEC ""
-ENV INDEXER_SPEC ""
+FROM algorand-generator as generator
 
-# Install Java (required by the code generator)
-RUN apt-get update && apt-get install -y libasound2 libxtst6
-RUN wget https://download.bell-sw.com/java/16+36/bellsoft-jdk16+36-linux-amd64.deb && \
-    apt install ./bellsoft-jdk16+36-linux-amd64.deb
+# ==============================
+# > FORMAT
+# ==============================
 
-# Use the /repo work directory
+# Use any base image here
+FROM node:latest as formatter
+
+# Copy files from previous build stage
+COPY --from=generator /repo /repo
 WORKDIR /repo
-COPY package*.json .
 
-# Install dependencies
+# Now you can install dependencies as needed
 RUN npm install
 
-# Copy everything else
-COPY . .
+# And then use any script you'd like here to format code
+RUN make format
 
-# Generate code
-CMD templates/generate.sh
+# ==============================
+# > PUBLISH
+# ==============================
+FROM generator as publisher
+
+# Copy work directory from previous stage to the /repo directory
+COPY --from=formatter /repo /repo
