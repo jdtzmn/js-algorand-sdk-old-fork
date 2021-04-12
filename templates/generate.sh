@@ -15,5 +15,3 @@ $TEMPLATE \
   -t "$TEMPLATE_DIR" \
   -m "src/client/v2/algod/models" \
   -p "$TEMPLATE_DIR/common_config.properties,$TEMPLATE_DIR/parameter_order_overrides.properties" \
-
-npm run format
